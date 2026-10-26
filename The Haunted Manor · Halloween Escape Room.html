@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Haunted Manor · Halloween Escape Room</title>
+<link href="https://fonts.googleapis.com/css2?family=Creepster&family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0b0a0e;--plum:#1d1030;--plum2:#2c1647;--toxic:#7CFF4F;--pump:#ff7a1a;--bone:#e9e2d0;--blood:#c1121f;
+--hd:'Creepster','Impact',fantasy;--bd:'Cinzel','Georgia',serif;color-scheme:dark;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root{--ink:#0b0a0e}}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--ink);color:var(--bone);font-family:var(--bd);line-height:1.55}
+body{background:radial-gradient(ellipse at 50% 0,var(--plum2),var(--ink) 65%) fixed;overflow-x:hidden}
+#mute{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));right:10px;z-index:80;font-size:1.2rem;padding:6px 10px;background:rgba(20,10,32,.85)}
+.fog{position:fixed;left:-50%;width:200%;height:40%;pointer-events:none;z-index:1;opacity:.18;
+background:radial-gradient(ellipse,#b9a6ff 0,transparent 65%);animation:drift 28s linear infinite}
+.fog.b{bottom:0;animation-duration:40s;animation-direction:reverse;opacity:.13}.fog.a{top:20%}
+@keyframes drift{to{transform:translateX(25%)}}
+#flash{position:fixed;inset:0;background:#cfd8ff;opacity:0;pointer-events:none;z-index:60}
+#flash.on{animation:fl .6s}
+@keyframes fl{0%,40%,60%{opacity:0}10%{opacity:.35}30%{opacity:.15}50%{opacity:.4}}
+main{position:relative;z-index:2;max-width:880px;margin:0 auto;padding:16px}
+h1,h2,h3{font-family:var(--hd);font-weight:400;letter-spacing:.04em;margin:.2em 0}
+h1{font-size:clamp(2.6rem,9vw,4.8rem);color:var(--pump);text-shadow:0 0 18px rgba(255,122,26,.7);animation:flick 5s infinite;text-align:center}
+@keyframes flick{0%,18%,22%,62%,64%,100%{opacity:1}20%,63%{opacity:.35}21%{opacity:.8}}
+h2{font-size:clamp(1.8rem,5vw,2.6rem);color:var(--toxic);text-shadow:0 0 12px rgba(124,255,79,.55)}
+.sub{text-align:center;color:#b9a9d6;max-width:56ch;margin:0 auto 18px}
+.hud{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:10px 14px;margin-bottom:14px;
+background:rgba(20,10,32,.85);border:1px solid #4b2a78;border-radius:10px 22px 10px 22px}
+.hud b{color:var(--toxic)}
+.inv{display:flex;gap:6px}.slot{width:44px;height:44px;display:grid;place-items:center;border:1px dashed #5a3a8a;border-radius:8px;font-size:1.5rem;position:relative;filter:grayscale(1) opacity(.35)}
+.slot.on{filter:none;border:1px solid var(--toxic);box-shadow:0 0 12px rgba(124,255,79,.55);animation:pop .5s}
+.slot i{position:absolute;right:-3px;bottom:-5px;font:700 .8rem var(--bd);color:#0b0a0e;background:var(--pump);border-radius:6px;padding:0 4px;font-style:normal}
+@keyframes pop{0%{transform:scale(.4) rotate(-20deg)}70%{transform:scale(1.25)}}
+.panel{position:relative;padding:22px;background:linear-gradient(160deg,rgba(44,22,71,.8),rgba(14,8,22,.92));border:1px solid #4b2a78;
+border-radius:14px 34px 14px 34px;box-shadow:0 0 40px rgba(124,255,79,.07),inset 0 0 60px rgba(0,0,0,.6)}
+.story{border-left:3px solid var(--pump);padding-left:12px;font-style:italic;color:#d6c9ee}
+p.tx{background:rgba(0,0,0,.35);padding:12px 14px;border-radius:8px}
+.gl{font-size:.85rem;color:#a798c4}
+button,input{font:inherit}
+button{cursor:pointer;color:var(--bone);background:var(--plum2);border:1px solid #6a3fa8;border-radius:8px;padding:8px 14px;transition:.2s}
+button:hover,button:focus-visible{border-color:var(--toxic);box-shadow:0 0 14px rgba(124,255,79,.5);color:var(--toxic);outline:none}
+button.go{background:var(--pump);color:#1a0b00;border-color:var(--pump);font-weight:700}
+button.go:hover{background:#ff9a4d;color:#1a0b00;box-shadow:0 0 18px rgba(255,122,26,.8)}
+input[type=text]{width:100%;background:#0d0716;color:var(--toxic);border:1px solid #5a3a8a;border-radius:8px;padding:9px 12px;letter-spacing:.08em}
+input[type=text]:focus{outline:none;border-color:var(--toxic);box-shadow:0 0 12px rgba(124,255,79,.5)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.q{margin:10px 0;padding:8px 0;border-bottom:1px solid #3a2358}
+.tf button.sel{background:var(--toxic);color:#0b0a0e;border-color:var(--toxic)}
+.msg{min-height:1.6em;margin-top:8px}.bad{color:#ff6b6b}.ok{color:var(--toxic)}
+.hint{color:var(--pump);font-style:italic}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;max-width:480px;margin:10px auto;user-select:none}
+.grid button{aspect-ratio:1;padding:0;font-weight:700;font-size:clamp(.8rem,3.4vw,1.1rem);border-radius:5px;background:#12091d}
+.grid button.start{background:var(--pump);color:#1a0b00}
+.grid button.found{background:var(--toxic);color:#0b0a0e;border-color:var(--toxic);box-shadow:0 0 8px rgba(124,255,79,.7)}
+.words{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}.words span{padding:2px 10px;border:1px solid #5a3a8a;border-radius:20px}
+.words span.d{text-decoration:line-through;color:var(--toxic);border-color:var(--toxic)}
+.key{display:grid;grid-template-columns:repeat(13,1fr);gap:3px;font-size:.78rem;text-align:center;margin:8px 0}
+.key div{background:#12091d;border-radius:4px;padding:2px 0}.key b{display:block;color:var(--pump)}
+.nums{font-size:1.25rem;letter-spacing:.14em;color:var(--toxic);word-spacing:.5em;text-shadow:0 0 8px rgba(124,255,79,.5)}
+.spider{position:absolute;font-size:1.1rem;opacity:.12;cursor:pointer;transition:.3s;z-index:5;background:none;border:0;padding:2px}
+.spider:hover,.spider:focus-visible{opacity:1;transform:scale(1.6);box-shadow:none}
+.modal{position:fixed;inset:0;z-index:70;display:grid;place-items:center;background:rgba(5,2,10,.85);padding:16px}
+.modal .panel{max-width:420px;text-align:center}.big{font-size:4.5rem;filter:drop-shadow(0 0 18px var(--toxic))}
+.lock{display:flex;gap:8px;justify-content:center;margin:14px 0}
+.lock input{width:52px;text-align:center;font-size:1.8rem;padding:8px 0}
+.shake{animation:sh .4s}@keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.rooms{display:flex;gap:6px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
+.rooms span{font-size:.8rem;padding:2px 9px;border-radius:14px;border:1px solid #4b2a78;color:#8b79ab}
+.rooms span.cur{border-color:var(--pump);color:var(--pump)}.rooms span.dn{border-color:var(--toxic);color:var(--toxic)}
+.center{text-align:center}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:520px){.key{grid-template-columns:repeat(9,1fr)}}
+</style>
+</head>
+<body>
+<div class="fog a"></div><div class="fog b"></div><div id="flash"></div>
+<button id="mute" aria-label="Toggle sound">🔊</button>
+<main id="app"></main>
+<script>
+const $=s=>document.querySelector(s),app=$("#app");
+const ROOMS=[
+{n:"The Haunted Library",ic:"📜",rel:"💀",rn:"Skull Key",dg:"6"},
+{n:"The Crypt",ic:"⚰️",rel:"🕯️",rn:"Ghost Candle",dg:"6"},
+{n:"The Vault",ic:"🔐",rel:"🧪",rn:"Cursed Potion",dg:"6"},
+{n:"The Laboratory",ic:"⚗️",rel:"🦴",rn:"Witch’s Bone",dg:"3"},
+{n:"The Belfry",ic:"🔔",rel:"🎃",rn:"Golden Pumpkin",dg:"1"}];
+const HINTS=[
+"Read the text again: the date, the festival, the trick-or-treaters and the pumpkin are all in there.",
+"Words can run across, down or diagonally. Click the first letter, then the last letter.",
+"Each number is a position in the alphabet: 1 = A, 2 = B… The first message is a greeting.",
+"Write the operation first. For the last one: 5x = 42 − 7.",
+"It is a mammal, it is small and black, and it hangs upside down in caves."];
+let S={r:-1,keys:[],spi:new Set(),t:0,hints:0,tick:null};
+const norm=s=>s.toLowerCase().replace(/[^a-z0-9.,]/g,"").replace(",",".");
+const fmt=t=>String(Math.floor(t/60)).padStart(2,"0")+":"+String(t%60).padStart(2,"0");
+/* SOUND: everything is synthesized with the Web Audio API */
+let AC=null,muted=false,drone=null;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){return null}}if(AC.state==="suspended"&&!muted)AC.resume();return AC}
+function tone(f,d=.15,type="sine",v=.12,t0=0,f2){if(muted)return;const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain(),t=a.currentTime+t0;o.type=type;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(a.destination);o.start(t);o.stop(t+d+.02)}
+function noise(d=.5,v=.2,fq=400,t0=0){if(muted)return;const a=ac();if(!a)return;const n=Math.floor(a.sampleRate*d),b=a.createBuffer(1,n,a.sampleRate),x=b.getChannelData(0);for(let i=0;i<n;i++)x[i]=(Math.random()*2-1)*(1-i/n);const s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();s.buffer=b;f.type="lowpass";f.frequency.value=fq;g.gain.value=v;s.connect(f).connect(g).connect(a.destination);s.start(a.currentTime+t0)}
+const SFX={
+ click:()=>tone(520,.06,"square",.04),
+ sel:()=>tone(330,.08,"triangle",.09),
+ ok:()=>[523,659,784].forEach((f,i)=>tone(f,.25,"triangle",.1,i*.09)),
+ bad:()=>{tone(150,.4,"sawtooth",.11,0,70);tone(143,.4,"sawtooth",.09,.02,66)},
+ word:()=>{tone(880,.18,"sine",.1);tone(1320,.28,"sine",.08,.08)},
+ spider:()=>[1800,1500,1900,1400,1700].forEach((f,i)=>tone(f,.05,"square",.05,i*.05)),
+ relic:()=>{[392,523,659,784,1047].forEach((f,i)=>tone(f,.45,"triangle",.1,i*.1));tone(65,1.4,"sine",.2)},
+ hint:()=>{tone(300,.6,"sine",.1,0,180);tone(306,.6,"sine",.08,0,184)},
+ thunder:()=>{noise(2.2,.55,220);noise(1.3,.3,140,.35)},
+ door:()=>{tone(90,1.2,"sawtooth",.09,0,55);noise(1,.1,900)},
+ creak:()=>{tone(180,.9,"sawtooth",.05,0,320);noise(.7,.06,1200,.1)},
+ howl:()=>{tone(380,1.8,"sine",.06,0,720);tone(385,1.8,"sine",.04,.15,740)},
+ win:()=>{[523,659,784,1047,784,1047,1319].forEach((f,i)=>tone(f,.35,"triangle",.12,i*.13));noise(1.6,.15,300)}
+};
+function startDrone(){if(drone||muted)return;const a=ac();if(!a)return;const g=a.createGain();g.gain.value=.035;[55,82.5,58].forEach(f=>{const o=a.createOscillator();o.type="sine";o.frequency.value=f;o.connect(g);o.start()});const l=a.createOscillator(),lg=a.createGain();l.frequency.value=.12;lg.gain.value=.02;l.connect(lg).connect(g.gain);l.start();g.connect(a.destination);drone=g}
+document.addEventListener("click",e=>{const b=e.target.closest("button");if(b&&b.id==="mute")return;startDrone();if(b)SFX.click()});
+$("#mute").onclick=()=>{muted=!muted;$("#mute").textContent=muted?"🔇":"🔊";if(muted){if(AC)AC.suspend()}else{startDrone();if(AC)AC.resume();SFX.sel()}};
+setInterval(()=>{if(Math.random()<.35){const f=$("#flash");f.classList.remove("on");void f.offsetWidth;f.classList.add("on");setTimeout(SFX.thunder,500)}},14000);
+setInterval(()=>{if(AC&&Math.random()<.55)(Math.random()<.5?SFX.creak:SFX.howl)()},19000);
+
+function hud(){return `<div class="hud"><span>⏱ <b id="tm">${fmt(S.t)}</b></span><span>🕷️ <b>${S.spi.size}</b>/5 spiders</span>
+<div class="inv">${ROOMS.map((r,i)=>`<div class="slot ${S.keys.includes(i)?"on":""}" title="${r.rn}">${r.rel}${S.keys.includes(i)?`<i>${r.dg}</i>`:""}</div>`).join("")}</div></div>
+<div class="rooms">${ROOMS.map((r,i)=>`<span class="${i==S.r?"cur":S.keys.includes(i)?"dn":""}">${r.ic} ${r.n}</span>`).join("")}</div>`}
+function start(){
+ app.innerHTML=`<h1>The Haunted Manor</h1><p class="sub">Midnight, October 31st. The doors have locked behind you. Solve five puzzles, gather five cursed relics and crack the code on the front door before the clock strikes dawn… if you dare.</p>
+ <div class="panel center"><div class="big">🏚️</div><p>Rules: find the answer in each room, collect its relic, and hunt for the <b>5 hidden spiders</b> 🕷️ (hover over each room to spot them!). Hints cost 30 seconds.</p><button class="go" id="st">Enter the manor</button></div>`;
+ $("#st").onclick=()=>{SFX.door();S={r:0,keys:[],spi:new Set(),t:0,hints:0,tick:S.tick};clearInterval(S.tick);S.tick=setInterval(()=>{S.t++;const e=$("#tm");if(e)e.textContent=fmt(S.t)},1000);room()};
+}
+function room(){
+ if(S.r>4)return door();
+ const R=ROOMS[S.r];
+ app.innerHTML=hud()+`<div class="panel" id="pn"><h2>${R.ic} ${R.n}</h2><div id="rb"></div><div class="row"><button id="hb">💡 Hint (+30 s)</button><button class="go" id="ck">Check answers</button></div><div class="msg" id="ms"></div></div>`;
+ [build0,build1,build2,build3,build4][S.r]();
+ $("#hb").onclick=()=>{SFX.hint();S.t+=30;S.hints++;$("#ms").innerHTML=`<span class="hint">💡 ${HINTS[S.r]}</span>`};
+ $("#ck").onclick=()=>{const r=CHECK[S.r]();r===true?win():(SFX.bad(),msg(r,"bad"))};
+ if(!S.keys.includes(S.r))spider();
+}
+function msg(t,c){$("#ms").innerHTML=`<span class="${c}">${t}</span>`;if(c=="bad"){$("#pn").classList.remove("shake");void $("#pn").offsetWidth;$("#pn").classList.add("shake")}}
+function spider(){const b=document.createElement("button");b.className="spider";b.textContent="🕷️";b.setAttribute("aria-label","Hidden spider");
+ b.style.top=(12+Math.random()*75)+"%";b.style.left=(4+Math.random()*88)+"%";
+ b.onclick=()=>{SFX.spider();S.spi.add(S.r);b.remove();document.querySelector(".hud span:nth-child(2) b").textContent=S.spi.size};$("#pn").appendChild(b)}
+function win(){
+ const R=ROOMS[S.r];S.keys.push(S.r);SFX.relic();
+ const m=document.createElement("div");m.className="modal";
+ m.innerHTML=`<div class="panel"><div class="big">${R.rel}</div><h2>${R.rn}</h2><p>Relic found! It is engraved with the number <b style="color:var(--pump);font-size:1.6rem">${R.dg}</b>. Remember it for the front door.</p><button class="go" id="nx">${S.r<4?"Next room":"Go to the front door"}</button></div>`;
+ document.body.appendChild(m);$("#nx").onclick=()=>{m.remove();S.r++;room()};
+}
+/* ROOM 1 */
+const TXT=`Halloween is on October 31st. It comes from an old Celtic festival called Samhain. Two thousand years ago, people lit big fires to scare away bad spirits. Today, children in the UK and the USA dress up as witches, ghosts and vampires. They go from house to house and say “Trick or treat!”, and the neighbours give them sweets. Many families also make a jack-o’-lantern: they cut a scary face in a pumpkin and put a candle inside.`;
+const TF=["Halloween is on November 1st.","Halloween comes from a Celtic festival.","Children go from house to house and say “Trick or treat!”","A jack-o’-lantern is made with an apple."],TFA=[0,1,1,0];
+let tf=[];
+function build0(){tf=[null,null,null,null];
+ $("#rb").innerHTML=`<p class="story">Dusty books fall from the shelves. One lies open on the lectern: “Read me, and the Skull Key is yours.”</p><p class="tx">${TXT}</p><p class="gl">Glossary: scare away = asustar · spirits = espíritus · candle = vela · sweets = golosinas</p>
+ ${TF.map((t,i)=>`<div class="q tf"><div>${i+1}. ${t}</div><div class="row"><button data-i="${i}" data-v="1">True</button><button data-i="${i}" data-v="0">False</button></div></div>`).join("")}
+ <div class="q">5. What do families put inside the pumpkin?<input type="text" id="a5" autocomplete="off"></div>
+ <div class="q">6. Why did people light big fires 2,000 years ago?<input type="text" id="a6" autocomplete="off"></div>`;
+ document.querySelectorAll(".tf button").forEach(b=>b.onclick=()=>{const i=+b.dataset.i;tf[i]=+b.dataset.v;SFX.sel();document.querySelectorAll(`.tf button[data-i="${i}"]`).forEach(x=>x.classList.toggle("sel",x===b))});
+}
+/* ROOM 2 */
+const G=["CXDQHVKYUCJP","GHOSTSFHQZCU","CDFAABROOMHM","KASKELETONLP","WUNVAMPIREQK","CLFDTATSWLAI","AORQYAYPFWDN","CVSXUHMISIPB","UUQTEOIDWTGG","JCVMUYHEBCKO","RZIUEMSRGHPJ","RMONSTERDAQL"];
+const WS=["PUMPKIN","WITCH","GHOST","SPIDER","CANDY","COSTUME","VAMPIRE","MONSTER","BROOM","SKELETON"];
+let first=null,found=new Set(),fc=new Set();
+function build1(){first=null;found=new Set();fc=new Set();
+ $("#rb").innerHTML=`<p class="story">Candles gutter among the tombs. Words are scratched into the wall. Find all ten to wake the Ghost Candle.</p><div class="words">${WS.map(w=>`<span id="w_${w}">${w}</span>`).join("")}</div><div class="grid" id="gr"></div><p class="gl center">Click the first letter, then the last letter of a word.</p>`;
+ const g=$("#gr");G.forEach((row,r)=>[...row].forEach((ch,c)=>{const b=document.createElement("button");b.textContent=ch;b.dataset.k=r+"-"+c;b.onclick=()=>pick(r,c);g.appendChild(b)}));
+}
+function line(a,b){const dr=b[0]-a[0],dc=b[1]-a[1],n=Math.max(Math.abs(dr),Math.abs(dc));if(!n||(dr&&dc&&Math.abs(dr)!=Math.abs(dc)))return null;const sr=Math.sign(dr),sc=Math.sign(dc);return Array.from({length:n+1},(_,i)=>[a[0]+sr*i,a[1]+sc*i])}
+function pick(r,c){
+ const el=k=>document.querySelector(`[data-k="${k}"]`);
+ if(!first){first=[r,c];SFX.sel();el(r+"-"+c).classList.add("start");return}
+ el(first[0]+"-"+first[1]).classList.remove("start");
+ const L=line(first,[r,c]);first=null;if(!L)return;
+ const s=L.map(([a,b])=>G[a][b]).join(""),w=WS.find(x=>x==s||x==[...s].reverse().join(""));
+ if(w&&!found.has(w)){found.add(w);SFX.word();$("#w_"+w).classList.add("d");L.forEach(([a,b])=>el(a+"-"+b).classList.add("found"))}
+ if(found.size==10){SFX.ok();msg("Every word revealed. Press “Check answers”.","ok")}
+}
+/* ROOM 3 */
+const M1=[8,1,16,16,25,8,1,12,12,15,23,5,5,14],M2=[2,5,23,1,18,5,15,6,20,8,5,22,1,13,16,9,18,5];
+const sp=(a,cuts)=>{let o="",p=0;cuts.forEach(n=>{o+=a.slice(p,p+n).join(" ")+" &nbsp; ";p+=n});return o};
+function build2(){
+ $("#rb").innerHTML=`<p class="story">An iron door covered in numbers. A rusty plaque shows the key. Decode both messages to open it.</p>
+ <div class="key">${"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map((l,i)=>`<div>${l}<b>${i+1}</b></div>`).join("")}</div>
+ <div class="q"><b>Message 1</b> (a Halloween greeting)<div class="nums">${sp(M1,[5,9])}</div><input type="text" id="m1" autocomplete="off"></div>
+ <div class="q"><b>Message 2</b> (a warning!)<div class="nums">${sp(M2,[5,2,3,6])}</div><input type="text" id="m2" autocomplete="off"></div>`;
+}
+/* ROOM 4 */
+const MQ=[["A pumpkin costs 4.50 €. You buy 3 pumpkins for the party. How much do you pay?",13.5],["A haunted house has 6 rooms. In each room there are 4 ghosts and 3 spiders. How many creatures are there in the house?",42],["The witch has 60 sweets. She gives one quarter (1/4) of them to the vampire. How many sweets does the vampire get?",15],["The vampire has some bats. If you multiply the number of bats by 5 and add 7, you get 42. How many bats does he have? (Hint: 5x + 7 = 42)",7]];
+function build3(){
+ $("#rb").innerHTML=`<p class="story">Bubbling cauldrons. A scrawled note: “Four calculations, four correct numbers, or the potion explodes.”</p>`+MQ.map((q,i)=>`<div class="q">${i+1}. ${q[0]}<input type="text" id="mq${i}" placeholder="Answer" inputmode="decimal" autocomplete="off"></div>`).join("");
+}
+/* ROOM 5 */
+function build4(){
+ $("#rb").innerHTML=`<p class="story">At the top of the tower, something stirs in the dark. A voice whispers its riddle…</p><div class="center" style="font-size:1.15rem"><p>I am small and black.<br>I sleep upside down during the day.<br>I fly at night, but I am not a bird.<br>I live in dark caves and old castles.</p><p><b>What am I?</b></p></div><div class="q">I am a <input type="text" id="rd" style="width:12em;display:inline-block" autocomplete="off">.</div>`;
+}
+const CHECK=[
+()=>{if(tf.includes(null))return "Answer all four True / False statements first.";
+ const bad=tf.filter((v,i)=>v!=TFA[i]).length;if(bad)return `${bad} of the True / False answers ${bad>1?"are":"is"} wrong. Read the text again.`;
+ if(!/candle/.test(norm($("#a5").value)))return "Question 5 is not right yet.";
+ if(!/(spirit|ghost|evil|scare|bad)/.test(norm($("#a6").value)))return "Question 6 is not right yet. Why did they light the fires?";return true},
+()=>found.size==10?true:`You have found ${found.size} of 10 words.`,
+()=>{const a=norm($("#m1").value)=="happyhalloween",b=norm($("#m2").value)=="bewareofthevampire";
+ return a&&b?true:!a&&!b?"Both messages are wrong. Check each number against the key.":a?"Message 2 is wrong.":"Message 1 is wrong."},
+()=>{let bad=0;MQ.forEach((q,i)=>{if(parseFloat(norm($("#mq"+i).value))!==q[1])bad++});return bad?`${bad} calculation${bad>1?"s are":" is"} wrong.`:true},
+()=>/^(a)?bat(s)?$/.test(norm($("#rd").value))||/^abat$/.test(norm($("#rd").value))?true:"The riddle is still unsolved. Try again."];
+/* FINAL DOOR */
+function door(){
+ app.innerHTML=hud()+`<div class="panel center"><h2>🚪 The Front Door</h2><p class="story" style="text-align:left">Five engraved relics glow in your bag. Read the numbers on them in the order you found them, and enter the code.</p>
+ <div class="lock" id="lk">${[0,1,2,3,4].map(i=>`<input type="text" maxlength="1" inputmode="numeric" aria-label="Digit ${i+1}">`).join("")}</div>
+ <div class="row" style="justify-content:center"><button class="go" id="op">Unlock the door</button></div><div class="msg" id="ms"></div></div>`;
+ const ins=[...document.querySelectorAll("#lk input")];
+ ins.forEach((x,i)=>x.oninput=()=>{if(x.value&&ins[i+1])ins[i+1].focus()});
+ $("#op").onclick=()=>{if(ins.map(x=>x.value).join("")==ROOMS.map(r=>r.dg).join("")){clearInterval(S.tick);end()}else{$("#lk").classList.remove("shake");void $("#lk").offsetWidth;$("#lk").classList.add("shake");SFX.bad();$("#ms").innerHTML=`<span class="bad">The lock stays shut. Check the numbers on your relics.</span>`}};
+}
+function end(){
+ SFX.win();const sc=Math.max(0,1000-S.t-S.hints*30+S.spi.size*60);
+ app.innerHTML=`<h1>You escaped!</h1><div class="panel center"><div class="big">🌕</div><h2>The doors swing open…</h2><p>Cold air, a full moon and a distant howl. You are free.</p>
+ <p>⏱ Time: <b style="color:var(--toxic)">${fmt(S.t)}</b> (including hint penalties)<br>💡 Hints used: <b style="color:var(--toxic)">${S.hints}</b><br>🕷️ Spiders found: <b style="color:var(--toxic)">${S.spi.size}/5</b><br>🏆 Score: <b style="color:var(--pump);font-size:1.5rem">${sc}</b></p>
+ <p class="hint">Happy Halloween!</p><button class="go" id="again">Play again</button></div>`;
+ $("#again").onclick=start;
+}
+start();
+</script>
+</body>
+</html>
